@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+	<title>Video Player</title>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/dplayer@1.25.0/dist/DPlayer.min.css">
+	<script type="text/javascript">block_aplayer = true;</script>
+	<script src="https://cdn.yimian.xyz/ushio-js/ushio-head.min.js"></script>
+</head>
+<body>
+
+	<div id="dplayer"></div>
+
+	<script src="https://cdn.yimian.xyz/ushio-js/ushio-footer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flv.js@1.5.0/dist/flv.min.js"></script>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/dplayer@1.25.0/dist/DPlayer.min.js"></script>
+	<script type="text/javascript">
+		var options = {
+    		container: document.getElementById('dplayer'),
+    		theme: '#'+('00000'+ (Math.random()*0x1000000<<0).toString(16)).substr(-6),
+    		logo: 'https://cdn.yimian.xyz/img/logo/logo_white.png',
+    		lang: 'zh-cn',
+            autoplay: true,
+    		video: {
+    			pic: 'https://api.yimian.xyz/img/?size=1920x1080'
+    		},
+    		danmaku: {
+		        id: $.md5(page.params.url+'').substr(0, 16),
+		        api: 'https://danmaku.yimian.xyz/',
+		        maximum: 1000,
+		        addition: [],
+		        user: 'iotcat',
+		        bottom: '15%',
+		        unlimited: true,
+		    }
+		};
+		/* if no GET video url */
+		if(Object.keys(page.params).length === 0 || !page.params.hasOwnProperty("url")){
+			options.video.url = 'https://api.yimian.xyz/video?path=404.mp4';
+		}else{
+			options.video.url = page.params.url;
+            cookie.set('last_watch', page.params.url);
+		}
+		const dp = new DPlayer(options);
+		/* recover history playing */
+		if(options.video.url && options.video.url != 'https://api.yimian.xyz/video?path=404.mp4'){
+			if(cookie.get($.md5(options.video.url)) != null){
+				dp.seek(cookie.get($.md5(options.video.url)));
+				dp.notice("已恢复到上次播放位置", 4000);
+			}
+		}
+		/* record seek point */
+		setInterval(function(){
+			if(!dp.video.paused && dp.video.currentTime > 10){
+				cookie.set($.md5(options.video.url), dp.video.currentTime);
+			}
+		}, 1000);
+        /* next video */
+        dp.on('ended', function() {
+            cookie.set($.md5(options.video.url), "0");
+            $.post("https://acg.watch/api/getNext.php?url="+options.video.url, function(res){
+                res = JSON.parse(res);
+				dp.notice("正在自动跳转至下一集", 4000);
+                setTimeout(function(){
+                    cookie.set('last_watch', res.url);
+                    history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
+                    dp.switchVideo(
+                        {
+                            url: res.url
+                        },
+                        {
+                            id: $.md5(res.url+'').substr(0, 16),
+                            api: 'https://danmaku.yimian.xyz/',
+                            maximum: 1000,
+                            addition: [],
+                            user: 'iotcat',
+                            bottom: '15%',
+                            unlimited: true,
+                        }
+                    );
+                }, 3000);
+            });
+    });
+	</script>
+</body>
+</html>

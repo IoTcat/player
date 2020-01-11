@@ -73,10 +73,11 @@
 	                    cookie.set('last_watch', res.url);
 	                    history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
 	                    page.params.url = res.url;
-	                    $.post("https://acg.watch/api/getQuality.php?url="+page.params.url, function(res){
+	                    $.post("https://acg.watch/api/getQuality.php?url="+res.url, function(res){
 		                    dp.switchVideo(
 		                        {
-		                            quality: JSON.parse(res)
+		                            quality: JSON.parse(res),
+		                            defaultQuality: 0
 		                        },
 		                        {
 		                            id: $.md5(res.url+'').substr(0, 16),

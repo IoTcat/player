@@ -45,11 +45,11 @@
 		}else{
             cookie.set('last_watch', page.params.url);
 		}
-		var dp = {};
+
 		$.post("https://acg.watch/api/getQuality.php?url="+page.params.url, function(res){
 
 			options.video.quality = JSON.parse(res);
-			dp = new DPlayer(options);
+			const dp = new DPlayer(options);
 			/* recover history playing */
 			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
 				if(cookie.get($.md5(options.video.quality[0].url)) != null){
@@ -57,40 +57,43 @@
 					dp.notice("已恢复到上次播放位置", 4000);
 				}
 			}
+			/* record seek point */
+			setInterval(function(){
+				if(!dp.video.paused && dp.video.currentTime > 10){
+					cookie.set($.md5(options.video.quality[0].url), dp.video.currentTime);
+				}
+			}, 1000);
+	        /* next video */
+	        dp.on('ended', function() {
+	            cookie.set($.md5(options.video.quality[0].url), "0");
+	            $.post("https://acg.watch/api/getNext.php?url="+options.video.quality[0].url, function(res){
+	                res = JSON.parse(res);
+					dp.notice("正在自动跳转至下一集", 4000);
+	                setTimeout(function(){
+	                    cookie.set('last_watch', res.url);
+	                    history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
+	                    page.params.url = res.url;
+	                    $.post("https://acg.watch/api/getQuality.php?url="+page.params.url, function(res){
+		                    dp.switchVideo(
+		                        {
+		                            quality: JSON.parse(res)
+		                        },
+		                        {
+		                            id: $.md5(res.url+'').substr(0, 16),
+		                            api: 'https://danmaku.yimian.xyz/',
+		                            maximum: 1000,
+		                            addition: [],
+		                            user: 'iotcat',
+		                            bottom: '15%',
+		                            unlimited: true,
+		                        }
+		                    );
+	                	}
+	                }, 2000);
+	            });
+	    	});
 		});
 
-		/* record seek point */
-		setInterval(function(){
-			if(!dp.video.paused && dp.video.currentTime > 10){
-				cookie.set($.md5(options.video.quality[0].url), dp.video.currentTime);
-			}
-		}, 1000);
-        /* next video */
-        dp.on('ended', function() {
-            cookie.set($.md5(options.video.quality[0].url), "0");
-            $.post("https://acg.watch/api/getNext.php?url="+options.video.quality[0].url, function(res){
-                res = JSON.parse(res);
-				dp.notice("正在自动跳转至下一集", 4000);
-                setTimeout(function(){
-                    cookie.set('last_watch', res.url);
-                    history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
-                    dp.switchVideo(
-                        {
-                            url: res.url
-                        },
-                        {
-                            id: $.md5(res.url+'').substr(0, 16),
-                            api: 'https://danmaku.yimian.xyz/',
-                            maximum: 1000,
-                            addition: [],
-                            user: 'iotcat',
-                            bottom: '15%',
-                            unlimited: true,
-                        }
-                    );
-                }, 3000);
-            });
-    });
 	</script>
 </body>
 </html>

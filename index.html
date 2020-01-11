@@ -25,7 +25,9 @@
     		lang: 'zh-cn',
             autoplay: true,
     		video: {
-    			pic: 'https://api.yimian.xyz/img/?size=1920x1080'
+    			pic: 'https://api.yimian.xyz/img/?size=1920x1080',
+    			quality: [],
+    			defaultQuality: 0
     		},
     		danmaku: {
 		        id: $.md5(page.params.url+'').substr(0, 16),
@@ -39,29 +41,34 @@
 		};
 		/* if no GET video url */
 		if(Object.keys(page.params).length === 0 || !page.params.hasOwnProperty("url")){
-			options.video.url = 'https://api.yimian.xyz/video?path=404.mp4';
+			page.params.url = "https://api.yimian.xyz/video/?path=404.mp4";
 		}else{
-			options.video.url = page.params.url;
             cookie.set('last_watch', page.params.url);
 		}
-		const dp = new DPlayer(options);
-		/* recover history playing */
-		if(options.video.url && options.video.url != 'https://api.yimian.xyz/video?path=404.mp4'){
-			if(cookie.get($.md5(options.video.url)) != null){
-				dp.seek(cookie.get($.md5(options.video.url)));
-				dp.notice("已恢复到上次播放位置", 4000);
+		var dp = {};
+		$.post("https://acg.watch/api/getQuality.php?url="+page.params.url, function(res){
+
+			options.video.quality = JSON.parse(res);
+			dp = new DPlayer(options);
+			/* recover history playing */
+			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
+				if(cookie.get($.md5(options.video.quality[0].url)) != null){
+					dp.seek(cookie.get($.md5(options.video.quality[0].url)));
+					dp.notice("已恢复到上次播放位置", 4000);
+				}
 			}
-		}
+		});
+
 		/* record seek point */
 		setInterval(function(){
 			if(!dp.video.paused && dp.video.currentTime > 10){
-				cookie.set($.md5(options.video.url), dp.video.currentTime);
+				cookie.set($.md5(options.video.quality[0].url), dp.video.currentTime);
 			}
 		}, 1000);
         /* next video */
         dp.on('ended', function() {
-            cookie.set($.md5(options.video.url), "0");
-            $.post("https://acg.watch/api/getNext.php?url="+options.video.url, function(res){
+            cookie.set($.md5(options.video.quality[0].url), "0");
+            $.post("https://acg.watch/api/getNext.php?url="+options.video.quality[0].url, function(res){
                 res = JSON.parse(res);
 				dp.notice("正在自动跳转至下一集", 4000);
                 setTimeout(function(){

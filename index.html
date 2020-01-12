@@ -41,7 +41,12 @@
 		};
 		/* if no GET video url */
 		if(Object.keys(page.params).length === 0 || !page.params.hasOwnProperty("url")){
-			page.params.url = "https://api.yimian.xyz/video/?path=404.mp4";
+            if(!cookie.get('last_watch')){
+			    page.params.url = "https://api.yimian.xyz/video/?path=404.mp4";
+            }else{
+                page.params.url = cookie.get('last_watch');
+                history.pushState({},page.title,"https://acg.watch/player?url="+cookie.get('last_watch'));
+            }
 		}else{
             cookie.set('last_watch', page.params.url);
 		}
@@ -73,11 +78,13 @@
 	                    cookie.set('last_watch', res.url);
 	                    history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
 	                    page.params.url = res.url;
-	                    $.post("https://acg.watch/api/getQuality.php?url="+res.url, function(res){
+	                    $.post("https://acg.watch/api/getQuality.php?url="+res.url, function(res2){
+                        console.log(JSON.parse(res2));
 		                    dp.switchVideo(
 		                        {
-		                            quality: JSON.parse(res),
-		                            defaultQuality: 0
+                                    url: res.url,
+                                    quality: JSON.parse(res2),
+                                    defaultQuality: 0
 		                        },
 		                        {
 		                            id: $.md5(res.url+'').substr(0, 16),
@@ -89,6 +96,8 @@
 		                            unlimited: true,
 		                        }
 		                    );
+                            
+                            //setTimeout(function(){dp.switchQuality(0);}, 1000);
 	                	});
 	                }, 2000);
 	            });

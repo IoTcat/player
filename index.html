@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-	<title>Video Player</title>
+	<title>ACG.WATCH Player</title>
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/dplayer@1.25.0/dist/DPlayer.min.css">
 	<script type="text/javascript">block_aplayer = true;</script>
 	<script src="https://cdn.yimian.xyz/ushio-js/ushio-head.min.js"></script>
@@ -16,6 +16,7 @@
     </p>
     <br/>
     <button onClick="next_video()">下一集</button>
+    <button onClick="window.location.href='../'">返回首页</button>
     <br/>
     <br/>
 
@@ -76,6 +77,8 @@
 					cookie.set($.md5(options.video.quality[0].url), dp.video.currentTime);
 				}
 			}, 1000);
+            /* print info */
+            getInfo();
 	        /* next video */
 	        dp.on('ended', next_video);
 		});
@@ -108,6 +111,8 @@
 	                            unlimited: true,
 	                        }
 	                    );
+                        /* print info */
+                        getInfo();
                         
                         //setTimeout(function(){dp.switchQuality(0);}, 1000);
                 	});

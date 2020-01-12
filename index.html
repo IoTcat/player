@@ -11,8 +11,13 @@
 
 	<div id="dplayer"></div>
     <br/>
+    <p>
+    	名称: <span id="video_name">未知</span>
+    </p>
     <br/>
     <button onClick="next_video()">下一集</button>
+    <br/>
+    <br/>
 
 	<script src="https://cdn.yimian.xyz/ushio-js/ushio-footer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -108,6 +113,15 @@
                 	});
                 }, 2000);
             });
+    	}
+    	var getInfo = function(){
+    		$.post('https://acg.watch/api/getInfo.php?url='+options.video.quality[0].url, function(res){
+    			res = JSON.parse(res);
+    			printInfo(res);
+    		});
+    	}
+    	var printInfo = function(res){
+    		$('#video_name').html(res.name);
     	}
 	</script>
 </body>

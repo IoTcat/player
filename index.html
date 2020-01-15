@@ -85,16 +85,7 @@
 	        /* next video */
 	        dp.on('ended', next_video);
 	        /* if waiting change source */
-	        dp.on('waiting', function(){
-	        	isWaiting = true;
-	        	setTimeout(function(){
-	        		if(isWaiting && dp.video.currentTime > options.video.playFrom + 10 && options.video.quality.length > 1){
-	        			dp.notice("监测到卡顿，切换片源");
-	        			options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality+1;
-	        			dp.switchQuality(options.video.defaultQuality);
-	        		}
-	        	}, 6000);
-	        });
+	        dp.on('waiting', waitEvent);
 	        dp.on('playing', function(){
 	        	isWaiting = false;
 	        });
@@ -147,7 +138,24 @@
     	var printInfo = function(res){
     		$('#video_name').html(res.name);
     	}
-
+    	var autoSwitchQuality = function(){
+    		if(isWaiting && options.video.quality.length > 1){
+    			waitEvent();
+		        dp.notice("监测到卡顿，切换片源");
+				options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality+1;
+				dp.switchQuality(options.video.defaultQuality);
+			}
+    	}
+    	var waitEvent = function(){
+        	isWaiting = true;
+        	setTimeout(function(){
+    			if(dp.video.currentTime > options.video.playFrom + 10){
+    				autoSwitchQuality();
+    			}else{
+    				setTimeout(autoSwitchQuality, 9000);
+    			}
+        	}, 6000);
+        };
 	</script>
 </body>
 </html>

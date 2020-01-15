@@ -141,8 +141,11 @@
     	var autoSwitchQuality = function(){
     		if(isWaiting && options.video.quality.length > 1){
     			waitEvent(15000);
+    			if(options.video.defaultQuality >= options.video.quality.length - 1){
+    				return;
+    			}
 		        dp.notice("监测到卡顿，切换片源");
-				options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality+1;
+				options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? options.video.defaultQuality : options.video.defaultQuality+1;
 				console.log('Switch quality to ' + options.video.defaultQuality);
 				dp.switchQuality(options.video.defaultQuality);
 			}

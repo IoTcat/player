@@ -140,14 +140,14 @@
     	}
     	var autoSwitchQuality = function(){
     		if(isWaiting && options.video.quality.length > 1){
-    			waitEvent();
+    			waitEvent(15000);
 		        dp.notice("监测到卡顿，切换片源");
 				options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality+1;
 				console.log('Switch quality to ' + options.video.defaultQuality);
 				dp.switchQuality(options.video.defaultQuality);
 			}
     	}
-    	var waitEvent = function(){
+    	var waitEvent = function(t = 6000){
         	isWaiting = true;
         	setTimeout(function(){
     			if(dp.video.currentTime > options.video.playFrom + 10){
@@ -155,7 +155,7 @@
     			}else{
     				setTimeout(autoSwitchQuality, 9000);
     			}
-        	}, 6000);
+        	}, t);
         };
 	</script>
 </body>

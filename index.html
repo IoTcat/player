@@ -86,12 +86,12 @@
 	        dp.on('waiting', function(){
 	        	isWaiting = true;
 	        	setTimeout(function(){
-	        		if(isWaiting && options.video.quality.length > 1){
+	        		if(isWaiting && dp.video.currentTime > 10 && options.video.quality.length > 1){
 	        			dp.notice("监测到卡顿，切换片源");
 	        			options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality+1;
 	        			dp.switchQuality(options.video.defaultQuality);
 	        		}
-	        	}, 8000);
+	        	}, 6000);
 	        });
 	        dp.on('playing', function(){
 	        	isWaiting = false;

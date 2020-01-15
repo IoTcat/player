@@ -36,7 +36,8 @@
     		video: {
     			pic: 'https://api.yimian.xyz/img/?size=1920x1080',
     			quality: [],
-    			defaultQuality: 0
+    			defaultQuality: 0,
+    			playFrom: 0
     		},
     		danmaku: {
 		        id: $.md5(page.params.url+'').substr(0, 16),
@@ -69,6 +70,7 @@
 			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
 				if(cookie.get($.md5(options.video.quality[0].url)) != null){
 					dp.seek(cookie.get($.md5(options.video.quality[0].url)));
+					options.video.playFrom = cookie.get($.md5(options.video.quality[0].url));
 					dp.notice("已恢复到上次播放位置", 4000);
 				}
 			}
@@ -86,7 +88,7 @@
 	        dp.on('waiting', function(){
 	        	isWaiting = true;
 	        	setTimeout(function(){
-	        		if(isWaiting && dp.video.currentTime > 10 && options.video.quality.length > 1){
+	        		if(isWaiting && dp.video.currentTime > options.video.playFrom + 10 && options.video.quality.length > 1){
 	        			dp.notice("监测到卡顿，切换片源");
 	        			options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality+1;
 	        			dp.switchQuality(options.video.defaultQuality);
@@ -111,6 +113,7 @@
                     console.log(JSON.parse(res2));
                     options.video.quality = JSON.parse(res2);
                     options.video.defaultQuality = 0;
+                    options.video.playFrom = 0;
 	                    dp.switchVideo(
 	                        {
                                 url: res.url,

@@ -60,6 +60,7 @@
             cookie.set('last_watch', page.params.url);
 		}
 		var dp = {};
+		var isWaiting = false;
 		$.post("https://acg.watch/api/getQuality.php?url="+page.params.url, function(res){
 
 			options.video.quality = JSON.parse(res);
@@ -81,13 +82,27 @@
             getInfo();
 	        /* next video */
 	        dp.on('ended', next_video);
+	        /* if waiting change source */
+	        dp.on('waiting', function(){
+	        	isWaiting = true;
+	        	setTimeout(function(){
+	        		if(isWaiting && options.video.quality.length > 1){
+	        			dp.notice("监测到卡顿，切换片源");
+	        			options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? 0 : options.video.defaultQuality++;
+	        			dp.switchQuality(options.video.defaultQuality);
+	        		}
+	        	}, 4000);
+	        });
+	        dp.on('playing', function(){
+	        	isWaiting = false;
+	        });
 		});
 
 		var next_video = function() {
             cookie.set($.md5(options.video.quality[0].url), "0");
             $.post("https://acg.watch/api/getNext.php?url="+options.video.quality[0].url, function(res){
                 res = JSON.parse(res);
-				dp.notice("正在自动跳转至下一集", 4000);
+				dp.notice("正在跳转至下一集", 4000);
                 setTimeout(function(){
                     cookie.set('last_watch', res.url);
                     history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
@@ -95,6 +110,7 @@
                     $.post("https://acg.watch/api/getQuality.php?url="+res.url, function(res2){
                     console.log(JSON.parse(res2));
                     options.video.quality = JSON.parse(res2);
+                    options.video.defaultQuality = 0;
 	                    dp.switchVideo(
 	                        {
                                 url: res.url,
@@ -128,6 +144,7 @@
     	var printInfo = function(res){
     		$('#video_name').html(res.name);
     	}
+
 	</script>
 </body>
 </html>

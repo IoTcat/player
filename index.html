@@ -302,10 +302,11 @@
         	$('#danmaku_numBottom').html(Object.keys(dp.danmaku.danTunnel.bottom).length);
         	$('#danmaku_numTop').html(Object.keys(dp.danmaku.danTunnel.top).length);
         	$('#danmaku_opacity').html(dp.danmaku._opacity);
+        	$('#danmaku_danIndex').html(dp.danmaku.danIndex);
         	$('#player_width').html(dp.video.videoWidth);
         	$('#player_height').html(dp.video.videoHeight);
         	$('#player_volume').html(dp.video.volume);
-        	$('#player_paused').html(dp.video.paused);
+        	$('#player_paused').html((dp.video.paused)?"true":"false");
         	$('#player_currentTime').html(dp.video.currentTime);
         	$('#player_duration').html(dp.video.duration);
         }, 1000);

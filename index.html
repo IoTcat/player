@@ -3,22 +3,104 @@
 <head>
     <meta charset="UTF-8">
 	<title>ACG.WATCH Player</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/awsm.css@3.0.4/dist/awsm_theme_pearl-lusta.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/dplayer@1.25.0/dist/DPlayer.min.css">
 	<script type="text/javascript">block_aplayer = true;</script>
 	<script src="https://cdn.yimian.xyz/ushio-js/ushio-head.min.js"></script>
 </head>
 <body>
+	<header>
+		<h1>ACG.WATCH</h1>
+		<p>Watch ACG video <abbr title="At ACG.WATCH">ONLINE</abbr></p>
+		<nav>
+			<ul>
+				<li><a href="../">Homepage</a></li>
+				<li><a href="../">Playlist</a></li>
+				<li><a href="https://iotcat.me/">About Me</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<article>
+			<section>
+				<div id="dplayer"></div>
+				<aside>
+					<p>
+						<strong>D.L.</strong>
+						<a href="javascript:window.open(page.params.url);">You can download this video from here..</a>
+					</p>
+				</aside>
+			</section>
+			<section>
+				<p>Name: <span id="video_name">Unkonwn..</span></p>
+			</section>
+			<section>
+				<button onClick="next_video()">Next</button>
+		    	<button onClick="window.location.href='../'">Homepage</button>
+			</section>
+			<section>
+				<details>
+		            <summary>Show Video Params</summary>
+		            <p>Instant video params ^_^</p>
+		            <table>
+		            	<thead>
+		            		<tr>
+		            			<th>Params</th>
+		            			<th>Value</th>
+		            		</tr>
+		            	</thead>
+		            	<tbody>
+		            		<tr>
+		            			<td>Video_Vid</td>
+		            			<td id="video_vid"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_Class</td>
+		            			<td id="video_class"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_Series</td>
+		            			<td id="video_series"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_No</td>
+		            			<td id="video_no"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_Name</td>
+		            			<td id="video_name"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_Link</td>
+		            			<td id="video_link"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_description</td>
+		            			<td id="video_description"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_DanmakuId</td>
+		            			<td id="video_danmaku"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_QualityOptions</td>
+		            			<td id="video_quality"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Video_PlayFrom</td>
+		            			<td id="video_playFrom"></td>
+		            		</tr>
 
-	<div id="dplayer"></div>
-    <br/>
-    <p>
-    	名称: <span id="video_name">未知</span>
-    </p>
-    <br/>
-    <button onClick="next_video()">下一集</button>
-    <button onClick="window.location.href='../'">返回首页</button>
-    <br/>
-    <br/>
+		            	</tbody>
+		            </table>
+          		</details>
+			</section>
+		</article>
+	</main>
+    <footer>
+    	<p style="text-align: center;"> Powered By Ushio | Made with love by <a href="https://iotcat.me">iotcat</a> </p>
+    	<br>
+    </footer>
 
 	<script src="https://cdn.yimian.xyz/ushio-js/ushio-footer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -137,6 +219,16 @@
     	}
     	var printInfo = function(res){
     		$('#video_name').html(res.name);
+    		$('#video_class').html(res.class);
+    		$('#video_series').html(res.series);
+    		$('#video_no').html(res.no);
+    		$('#video_vid').html(res.vid);
+    		$('#video_link').html(res.link);
+    		$('#video_description').html(res.description);
+    		$('#video_danmaku').html($.md5(res.url+'').substr(0, 16));
+    		$('#video_quality').html(options.video.quality.length);
+    		$('#video_playFrom').html(options.video.playFrom);
+
     	}
     	var autoSwitchQuality = function(){
     		if(isWaiting && options.video.quality.length > 1){

@@ -165,7 +165,7 @@
     			playFrom: 0
     		},
     		danmaku: {
-		        id: $.md5(page.params.url+'').substr(0, 16),
+		        id: $.md5(page.params.url+'').substr(0, 8),
 		        api: 'https://danmaku.yimian.xyz/',
 		        maximum: 1000,
 		        addition: [],
@@ -187,9 +187,10 @@
 		}
 		var dp = {};
 		var isWaiting = false;
-		$.post("https://acg.watch/api/getQuality.php?url="+page.params.url, function(res){
-
-			options.video.quality = JSON.parse(res);
+		$.post("https://acg.watch/api/getPreInfo.php?url="+page.params.url, function(res){
+			res = JSON.parse(res);
+			options.video.quality = res.quality;
+			options.danmaku.id = res.danmaku;
 			dp = new DPlayer(options);
 			/* recover history playing */
 			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
@@ -225,19 +226,20 @@
                     cookie.set('last_watch', res.url);
                     history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
                     page.params.url = res.url;
-                    $.post("https://acg.watch/api/getQuality.php?url="+res.url, function(res2){
-                    console.log(JSON.parse(res2));
-                    options.video.quality = JSON.parse(res2);
+                    $.post("https://acg.watch/api/getPreInfo.php?url="+res.url, function(res2){
+                    res2 = JSON.parse(res2);
+                    options.video.quality = res2.quality;
+                    options.danmaku.id = res2.danmaku;
                     options.video.defaultQuality = 0;
                     options.video.playFrom = 0;
 	                    dp.switchVideo(
 	                        {
                                 url: res.url,
-                                quality: JSON.parse(res2),
+                                quality: res2.quality,
                                 defaultQuality: 0
 	                        },
 	                        {
-	                            id: $.md5(res.url+'').substr(0, 16),
+	                            id: res2.danmaku,
 	                            api: 'https://danmaku.yimian.xyz/',
 	                            maximum: 1000,
 	                            addition: [],
@@ -269,7 +271,6 @@
     		$('#video_vid').html(res.vid);
     		$('#video_link').html(res.link);
     		$('#video_description').html(res.description);
-    		$('#video_danmaku').html($.md5(res.url+'').substr(0, 16));
     		$('#video_quality').html(options.video.quality.length);
     		$('#video_playFrom').html(options.video.playFrom);
 
@@ -303,6 +304,7 @@
         	$('#danmaku_numTop').html(Object.keys(dp.danmaku.danTunnel.top).length);
         	$('#danmaku_opacity').html(dp.danmaku._opacity);
         	$('#danmaku_danIndex').html(dp.danmaku.danIndex);
+        	$('#video_danmaku').html(options.danmaku.id);
         	$('#player_width').html(dp.video.videoWidth);
         	$('#player_height').html(dp.video.videoHeight);
         	$('#player_volume').html(dp.video.volume);

@@ -90,7 +90,50 @@
 		            			<td>Video_PlayFrom</td>
 		            			<td id="video_playFrom"></td>
 		            		</tr>
-
+		            		<tr>
+		            			<td>Player_Width</td>
+		            			<td id="player_width"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Player_Height</td>
+		            			<td id="player_height"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Player_CurrentTime</td>
+		            			<td id="player_currentTime"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Player_Duration</td>
+		            			<td id="player_duration"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Player_Volume</td>
+		            			<td id="player_volume"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Player_Paused</td>
+		            			<td id="player_paused"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Danmaku_Num</td>
+		            			<td id="danmaku_danIndex"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Danmaku_Opacity</td>
+		            			<td id="danmaku_opacity"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Danmaku_NumBottom</td>
+		            			<td id="danmaku_numBottom"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Danmaku_NumRight</td>
+		            			<td id="danmaku_numRight"></td>
+		            		</tr>
+		            		<tr>
+		            			<td>Danmaku_NumTop</td>
+		            			<td id="danmaku_numTop"></td>
+		            		</tr>
 		            	</tbody>
 		            </table>
           		</details>
@@ -253,6 +296,19 @@
     			}
         	}, t);
         };
+        /* print player and danmaku info */
+        setInterval(function(){
+        	$('#danmaku_numRight').html(Object.keys(dp.danmaku.danTunnel.right).length);
+        	$('#danmaku_numBottom').html(Object.keys(dp.danmaku.danTunnel.bottom).length);
+        	$('#danmaku_numTop').html(Object.keys(dp.danmaku.danTunnel.top).length);
+        	$('#danmaku_opacity').html(dp.danmaku._opacity);
+        	$('#player_width').html(dp.video.videoWidth);
+        	$('#player_height').html(dp.video.videoHeight);
+        	$('#player_volume').html(dp.video.volume);
+        	$('#player_paused').html(dp.video.paused);
+        	$('#player_currentTime').html(dp.video.currentTime);
+        	$('#player_duration').html(dp.video.duration);
+        }, 1000);
 	</script>
 </body>
 </html>

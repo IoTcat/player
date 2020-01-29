@@ -212,7 +212,7 @@
 				}
 			}, 1000);
             /* print info */
-            getInfo();
+            getInfo(res);
 	        /* next video */
 	        dp.on('ended', next_video);
 	        /* if waiting change source */
@@ -281,7 +281,7 @@
     		$('#video_series').html(res.series);
     		$('#video_no').html(res.no);
     		$('#video_vid').html(res.vid);
-    		$('#video_link').html(res.link);
+    		$('#video_link').html(res.url);
     		$('#video_description').html(res.description);
     		$('#video_quality').html(options.video.quality.length);
     		$('#video_playFrom').html(options.video.playFrom);

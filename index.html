@@ -224,7 +224,7 @@
 
 		var next_video = function() {
             cookie.set($.md5(options.video.quality[0].url), "0");
-            $.post("https://acg.watch/api/getNextByUrl?url="+options.video.quality[0].url, function(res){
+            $.get("https://acg.watch/api/getNextByUrl?url="+options.video.quality[0].url, function(res){
                 //res = JSON.parse(res);
 				dp.notice("正在跳转至下一集", 4000);
                 setTimeout(function(){

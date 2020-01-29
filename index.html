@@ -187,7 +187,7 @@
 		}
 		var dp = {};
 		var isWaiting = false;
-		$.get("https://acg.watch/api/getVideoByUrl.php?url="+page.params.url, function(res){
+		$.get("https://acg.watch/api/getVideoByUrl?url="+page.params.url, function(res){
 			//res = JSON.parse(res);
 			options.video.quality = [
 				{

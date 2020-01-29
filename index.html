@@ -187,10 +187,15 @@
 		}
 		var dp = {};
 		var isWaiting = false;
-		$.post("https://acg.watch/api/getPreInfo.php?url="+page.params.url, function(res){
-			res = JSON.parse(res);
-			options.video.quality = res.quality;
-			options.danmaku.id = res.danmaku;
+		$.get("https://acg.watch/api/getVideoByUrl.php?url="+page.params.url, function(res){
+			//res = JSON.parse(res);
+			options.video.quality = [
+				{
+					name: '推荐',
+					url: res.url
+				}
+			];
+			options.danmaku.id = res.danmakuID;
 			dp = new DPlayer(options);
 			/* recover history playing */
 			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
@@ -219,27 +224,37 @@
 
 		var next_video = function() {
             cookie.set($.md5(options.video.quality[0].url), "0");
-            $.post("https://acg.watch/api/getNext.php?url="+options.video.quality[0].url, function(res){
-                res = JSON.parse(res);
+            $.post("https://acg.watch/api/getNextByUrl?url="+options.video.quality[0].url, function(res){
+                //res = JSON.parse(res);
 				dp.notice("正在跳转至下一集", 4000);
                 setTimeout(function(){
                     cookie.set('last_watch', res.url);
                     history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
                     page.params.url = res.url;
-                    $.post("https://acg.watch/api/getPreInfo.php?url="+res.url, function(res2){
-                    res2 = JSON.parse(res2);
-                    options.video.quality = res2.quality;
-                    options.danmaku.id = res2.danmaku;
+
+                    //res2 = JSON.parse(res2);
+                    options.video.quality = [
+                    	{
+                    		name: "推荐",
+                    		url: res.url
+                    	}
+                    ];
+                    options.danmaku.id = res.danmakuID;
                     options.video.defaultQuality = 0;
                     options.video.playFrom = 0;
 	                    dp.switchVideo(
 	                        {
                                 url: res.url,
-                                quality: res2.quality,
+                                quality: [
+			                    	{
+			                    		name: "推荐",
+			                    		url: res.url
+			                    	}
+			                    ],
                                 defaultQuality: 0
 	                        },
 	                        {
-	                            id: res2.danmaku,
+	                            id: res.danmakuID,
 	                            api: 'https://danmaku.yimian.xyz/',
 	                            maximum: 1000,
 	                            addition: [],
@@ -249,18 +264,15 @@
 	                        }
 	                    );
                         /* print info */
-                        getInfo();
+                        getInfo(res);
                         
                         //setTimeout(function(){dp.switchQuality(0);}, 1000);
-                	});
+
                 }, 2000);
             });
     	}
-    	var getInfo = function(){
-    		$.post('https://acg.watch/api/getInfo.php?url='+options.video.quality[0].url, function(res){
-    			res = JSON.parse(res);
-    			printInfo(res);
-    		});
+    	var getInfo = function(res){
+			printInfo(res);
     	}
     	var printInfo = function(res){
     		$('#video_name').html(res.name);

@@ -189,12 +189,7 @@
 		var isWaiting = false;
 		$.get("https://acg.watch/api/getVideoByUrl?url="+page.params.url, function(res){
 			//res = JSON.parse(res);
-			options.video.quality = [
-				{
-					name: '推荐',
-					url: res.url
-				}
-			];
+			options.video.quality = getQuality(res);
 			options.danmaku.id = res.danmakuID;
 			dp = new DPlayer(options);
 			/* recover history playing */
@@ -233,24 +228,14 @@
                     page.params.url = res.url;
 
                     //res2 = JSON.parse(res2);
-                    options.video.quality = [
-                    	{
-                    		name: "推荐",
-                    		url: res.url
-                    	}
-                    ];
+                    options.video.quality = getQuality(res);
                     options.danmaku.id = res.danmakuID;
                     options.video.defaultQuality = 0;
                     options.video.playFrom = 0;
 	                    dp.switchVideo(
 	                        {
                                 url: res.url,
-                                quality: [
-			                    	{
-			                    		name: "推荐",
-			                    		url: res.url
-			                    	}
-			                    ],
+                                quality: getQuality(res),
                                 defaultQuality: 0
 	                        },
 	                        {
@@ -270,6 +255,24 @@
 
                 }, 2000);
             });
+    	}
+    	var getQuality = function(res){
+    		var quality = [
+    			{
+    				name: "推荐",
+    				url: res.url
+    			}
+    		];
+    		if(res.hasOwnProperty('extra') && res.extra.length > 0){
+    			for(var i = 0; i < res.extra.length; i++){
+    				quality.push({
+    					name: "备选"+i,
+    					url: res.extra[i]
+    				});
+    			}
+    		}
+
+    		return quality;
     	}
     	var getInfo = function(res){
 			printInfo(res);

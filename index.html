@@ -191,6 +191,7 @@
 			//res = JSON.parse(res);
 			options.video.quality = getQuality(res);
 			options.danmaku.id = res.danmakuID;
+			options.danmaku.addition = (res.hasOwnProperty('danmakuAdd'))?res.danmakuAdd:[];
 			dp = new DPlayer(options);
 			/* recover history playing */
 			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
@@ -230,6 +231,7 @@
                     //res2 = JSON.parse(res2);
                     options.video.quality = getQuality(res);
                     options.danmaku.id = res.danmakuID;
+                    options.danmaku.addition = (res.hasOwnProperty('danmakuAdd'))?res.danmakuAdd:[];
                     options.video.defaultQuality = 0;
                     options.video.playFrom = 0;
 	                    dp.switchVideo(
@@ -242,7 +244,7 @@
 	                            id: res.danmakuID,
 	                            api: 'https://danmaku.yimian.xyz/',
 	                            maximum: 1000,
-	                            addition: [],
+	                            addition: (res.hasOwnProperty('danmakuAdd'))?res.danmakuAdd:[],
 	                            user: 'iotcat',
 	                            bottom: '15%',
 	                            unlimited: true,

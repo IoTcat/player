@@ -166,7 +166,7 @@
     		},
     		danmaku: {
 		        id: $.md5(page.params.url+'').substr(0, 8),
-		        api: 'https://danmaku.yimian.xyz/',
+		        api: 'https://api.yimian.xyz/danmaku/',
 		        maximum: 1000,
 		        addition: [],
 		        user: 'iotcat',
@@ -242,7 +242,7 @@
 	                        },
 	                        {
 	                            id: res.danmakuID,
-	                            api: 'https://danmaku.yimian.xyz/',
+	                            api: 'https://api.yimian.xyz/danmaku/',
 	                            maximum: 1000,
 	                            addition: (res.hasOwnProperty('danmakuAdd'))?res.danmakuAdd:[],
 	                            user: 'iotcat',

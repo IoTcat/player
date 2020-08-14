@@ -306,6 +306,7 @@
     	}
     	var waitEvent = function(t = 6000){
         	isWaiting = true;
+            if(page.timezone == "Asia/Shanghai") autoSwitchQuality();
         	setTimeout(function(){
     			if(dp.video.currentTime > options.video.playFrom + 10){
     				autoSwitchQuality();

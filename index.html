@@ -175,16 +175,18 @@
 		    }
 		};
 		/* if no GET video url */
+    session.onload(()=>{
 		if(Object.keys(page.params).length === 0 || !page.params.hasOwnProperty("url")){
-            if(!cookie.get('last_watch')){
+            if(!session.get('acg/last_watch')){
 			    page.params.url = "https://api.yimian.xyz/video/?path=404.mp4";
             }else{
-                page.params.url = cookie.get('last_watch');
-                history.pushState({},page.title,"https://acg.watch/player?url="+cookie.get('last_watch'));
+                page.params.url = session.get('acg/last_watch');
+                history.pushState({},page.title,"https://acg.watch/player?url="+session.get('acg/last_watch'));
             }
 		}else{
-            cookie.set('last_watch', page.params.url);
+            session.set('acg/last_watch', page.params.url);
 		}
+    });
 		var dp = {};
 		var isWaiting = false;
 		$.get("https://acg.watch/api/getVideoByUrl?url="+page.params.url, function(res){
@@ -195,18 +197,22 @@
 			dp = new DPlayer(options);
 			/* recover history playing */
 			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
-				if(cookie.get($.md5(options.video.quality[0].url)) != null){
-					dp.seek(cookie.get($.md5(options.video.quality[0].url)));
-					options.video.playFrom = cookie.get($.md5(options.video.quality[0].url));
+            session.onload(()=>{
+				if(session.get($.md5(options.video.quality[0].url)) != null){
+					dp.seek(session.get($.md5(options.video.quality[0].url)));
+					options.video.playFrom = session.get($.md5(options.video.quality[0].url));
 					dp.notice("已恢复到上次播放位置", 4000);
 				}
+            });
 			}
 			/* record seek point */
 			setInterval(function(){
 				if(!dp.video.paused && dp.video.currentTime > 10){
-					cookie.set($.md5(options.video.quality[0].url), dp.video.currentTime);
-				}
-			}, 1000);
+                session.onload(()=>{
+                    session.set($.md5(options.video.quality[0].url), dp.video.currentTime);
+                });
+                }
+			}, 8000);
             /* print info */
             getInfo(res);
 	        /* next video */
@@ -219,12 +225,13 @@
 		});
 
 		var next_video = function() {
-            cookie.set($.md5(options.video.quality[0].url), "0");
+        session.onload(()=>{
+            session.set($.md5(options.video.quality[0].url), "0");
             $.get("https://acg.watch/api/getNextByUrl?url="+options.video.quality[0].url, function(res){
                 //res = JSON.parse(res);
 				dp.notice("正在跳转至下一集", 4000);
                 setTimeout(function(){
-                    cookie.set('last_watch', res.url);
+                    session.set('acg/last_watch', res.url);
                     history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
                     page.params.url = res.url;
 
@@ -257,6 +264,7 @@
 
                 }, 2000);
             });
+        });
     	}
     	var getQuality = function(res){
     		var quality = [

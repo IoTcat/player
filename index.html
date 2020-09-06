@@ -5,18 +5,19 @@
 	<title>ACG.WATCH Player</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/awsm.css@3.0.4/dist/awsm_theme_pearl-lusta.min.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/dplayer@1.25.0/dist/DPlayer.min.css">
-	<script type="text/javascript">block_aplayer = true;</script>
+	<script type="text/javascript">block_aplayer = true;lang = ['zh', 'en'];</script>
 	<script src="https://cdn.yimian.xyz/ushio-js/ushio-head.min.js"></script>
+	<script type="text/javascript">page.proj = 'iotcat/player';</script>
 </head>
 <body>
 	<header>
 		<h1>ACG.WATCH</h1>
-		<p>Watch ACG video <abbr title="At ACG.WATCH">ONLINE</abbr></p>
+		<p><span class=".zh"><abbr title="在 ACG.WATCH">在线</abbr>观看经典番剧</span><span class=".en">Watch ACG video <abbr title="At ACG.WATCH">ONLINE</abbr></span></p>
 		<nav>
 			<ul>
-				<li><a href="../">Homepage</a></li>
-				<li><a href="../">Playlist</a></li>
-				<li><a href="https://iotcat.me/">About Me</a></li>
+				<li><a href="./" aria-hidden="false"><span class=".zh">主页</span><span class=".en">Homepage</span></a></li>
+				<li><a href="./"><span class=".zh">列表</span><span class=".en">Playlist</span></a></li>
+				<li><a href="https://iotcat.me/"><span class=".zh">关于我</span><span class=".en">About Me</span></a></li>
 			</ul>
 		</nav>
 	</header>
@@ -27,26 +28,26 @@
 				<aside>
 					<p>
 						<strong>D.L.</strong>
-						<a href="javascript:window.open(page.params.url);">You can download this video from here..</a>
+						<a href="javascript:window.open(page.params.url);"><span class=".zh">点击这里下载此视频~</span><span class=".en">You can download this video from here..</span></a>
 					</p>
 				</aside>
 			</section>
 			<section>
-				<p>Name: <span id="video_name">Unkonwn..</span></p>
+				<p><span class=".zh">视频名称</span><span class=".en">Name</span></a>: <span id="video_name"><span class=".zh">未知</span><span class=".en">Unkonwn..</span></span></p>
 			</section>
 			<section>
-				<button onClick="next_video()">Next</button>
-		    	<button onClick="window.location.href='../'">Homepage</button>
+				<button onClick="next_video()"><span class=".zh">下一集</span><span class=".en">Next</span></button>
+		    	<button onClick="window.location.href='../'"><span class=".zh">主页</span><span class=".en">Homepage</span></button>
 			</section>
 			<section>
 				<details>
-		            <summary>Show Video Params</summary>
-		            <p>Instant video params ^_^</p>
+		            <summary><span class=".zh">展开视频参数</span><span class=".en">Show Video Params</span></summary>
+		            <p><span class=".zh">以下是实时视频参数哦^_^</span><span class=".en">Instant video params ^_^</span></p>
 		            <table>
 		            	<thead>
 		            		<tr>
-		            			<th>Params</th>
-		            			<th>Value</th>
+		            			<th><span class=".zh">名称</span><span class=".en">Params</span></th>
+		            			<th><span class=".zh">值</span><span class=".en">Value</span></th>
 		            		</tr>
 		            	</thead>
 		            	<tbody>
@@ -141,7 +142,7 @@
 		</article>
 	</main>
     <footer>
-    	<p style="text-align: center;"> Powered By Ushio | Made with love by <a href="https://iotcat.me">iotcat</a> </p>
+    	<p style="text-align: center;"> Powered By <a href="https://ushio.cool">Ushio</a> | Made with love by <a href="https://iotcat.me">iotcat</a> </p>
     	<br>
     </footer>
 
@@ -156,7 +157,7 @@
     		container: document.getElementById('dplayer'),
     		theme: '#'+('00000'+ (Math.random()*0x1000000<<0).toString(16)).substr(-6),
     		logo: 'https://cdn.yimian.xyz/img/logo/logo_white.png',
-    		lang: 'zh-cn',
+    		lang: ((page.tran.getLang() == 'zh')?'zh-cn':'en'),
             autoplay: true,
     		video: {
     			pic: 'https://api.yimian.xyz/img/?size=1920x1080',
@@ -201,7 +202,10 @@
 				if(session.get($.md5(options.video.quality[0].url)) != null){
 					dp.seek(session.get($.md5(options.video.quality[0].url)));
 					options.video.playFrom = session.get($.md5(options.video.quality[0].url));
-					dp.notice("已恢复到上次播放位置", 4000);
+					if(page.tran.getLang() == 'zh')
+						dp.notice("已恢复到上次播放位置", 4000);
+					else
+						dp.notice("Video recovered from Cloud..", 4000);
 				}
             });
 			}
@@ -229,7 +233,10 @@
             session.set($.md5(options.video.quality[0].url), "0");
             $.get("https://acg.watch/api/getNextByUrl?url="+options.video.quality[0].url, function(res){
                 //res = JSON.parse(res);
-				dp.notice("正在跳转至下一集", 4000);
+                if(page.tran.getLang() == 'zh')
+					dp.notice("正在跳转至下一集", 4000);
+				else
+					dp.notice("Jumping to the next episode", 4000);
                 setTimeout(function(){
                     session.set('acg/last_watch', res.url);
                     history.pushState({},page.title,"https://acg.watch/player?url="+res.url);
@@ -269,14 +276,14 @@
     	var getQuality = function(res){
     		var quality = [
     			{
-    				name: "推荐",
+    				name: ((page.tran.getLang() == 'zh')?"推荐":'Preferred'),
     				url: res.url
     			}
     		];
     		if(res.hasOwnProperty('extra') && res.extra.length > 0){
     			for(var i = 0; i < res.extra.length; i++){
     				quality.push({
-    					name: "备选"+i,
+    					name: ((page.tran.getLang() == 'zh')?"备选":'Backup ')+i,
     					url: res.extra[i]
     				});
     			}
@@ -306,7 +313,10 @@
     			if(options.video.defaultQuality >= options.video.quality.length - 1){
     				return;
     			}
-		        dp.notice("监测到卡顿，切换片源");
+    			if(page.tran.getLang() == 'zh')
+		        	dp.notice("监测到卡顿，切换片源");
+		        else
+		        	dp.notice("Detected freeze, trying another source");
 				options.video.defaultQuality = (options.video.defaultQuality >= options.video.quality.length - 1) ? options.video.defaultQuality : options.video.defaultQuality+1;
 				console.log('Switch quality to ' + options.video.defaultQuality);
 				dp.switchQuality(options.video.defaultQuality);

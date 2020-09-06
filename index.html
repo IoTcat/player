@@ -153,6 +153,7 @@
     <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/dplayer@1.25.0/dist/DPlayer.min.js"></script>
 	<script type="text/javascript">
+$(function(){
 		var options = {
     		container: document.getElementById('dplayer'),
     		theme: '#'+('00000'+ (Math.random()*0x1000000<<0).toString(16)).substr(-6),
@@ -348,6 +349,7 @@
         	$('#player_currentTime').html(dp.video.currentTime);
         	$('#player_duration').html(dp.video.duration);
         }, 1000);
+});
 	</script>
 </body>
 </html>

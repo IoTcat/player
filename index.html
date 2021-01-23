@@ -15,8 +15,8 @@
 		<p><span class=".zh"><abbr title="在 ACG.WATCH">在线</abbr>观看经典番剧</span><span class=".en">Watch ACG video <abbr title="At ACG.WATCH">ONLINE</abbr></span></p>
 		<nav>
 			<ul>
-				<li><a href="./" aria-hidden="false"><span class=".zh">主页</span><span class=".en">Homepage</span></a></li>
-				<li><a href="./"><span class=".zh">列表</span><span class=".en">Playlist</span></a></li>
+				<li><a href="../" aria-hidden="false"><span class=".zh">主页</span><span class=".en">Homepage</span></a></li>
+				<li><a href="../"><span class=".zh">列表</span><span class=".en">Playlist</span></a></li>
 				<li><a href="https://iotcat.me/"><span class=".zh">关于我</span><span class=".en">About Me</span></a></li>
 			</ul>
 		</nav>
@@ -277,14 +277,14 @@ $(function(){
     	var getQuality = function(res){
     		var quality = [
     			{
-    				name: ((page.tran.getLang() == 'zh')?"推荐":'Preferred'),
+    				name: ((page.tran.getLang() == 'zh')?"海外":'USA'),
     				url: res.url
     			}
     		];
     		if(res.hasOwnProperty('extra') && res.extra.length > 0){
     			for(var i = 0; i < res.extra.length; i++){
     				quality.push({
-    					name: ((page.tran.getLang() == 'zh')?"备选":'Backup ')+i,
+    					name: ((i==0)?(((page.tran.getLang() == 'zh')?"国内":'China ')):(((page.tran.getLang() == 'zh')?"备选"+i:'Backup '+i))),
     					url: res.extra[i]
     				});
     			}

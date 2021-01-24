@@ -180,7 +180,7 @@ $(function(){
     session.onload(()=>{
 		if(Object.keys(page.params).length === 0 || !page.params.hasOwnProperty("url")){
             if(!session.get('acg/last_watch')){
-			    page.params.url = "https://api.yimian.xyz/video/?path=404.mp4";
+			    page.params.url = "https://cdn.yimian.xyz/video/404.mp4";
             }else{
                 page.params.url = session.get('acg/last_watch');
                 history.pushState({},page.title,"https://acg.watch/player?url="+session.get('acg/last_watch'));
@@ -198,7 +198,7 @@ $(function(){
 			options.danmaku.addition = (res.hasOwnProperty('danmakuAdd'))?res.danmakuAdd:[];
 			dp = new DPlayer(options);
 			/* recover history playing */
-			if(options.video.quality[0].url && options.video.quality[0].url != 'https://api.yimian.xyz/video?path=404.mp4'){
+			if(options.video.quality[0].url && options.video.quality[0].url != 'https://cdn.yimian.xyz/video/404.mp4'){
             session.onload(()=>{
 				if(session.get($.md5(options.video.quality[0].url)) != null){
 					dp.seek(session.get($.md5(options.video.quality[0].url)));

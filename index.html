@@ -229,10 +229,10 @@ $(function(){
 	        });
 		});
 
-		var next_video = function() {
+		next_video = function() {
         session.onload(()=>{
             session.set($.md5(options.video.quality[0].url), "0");
-            $.get("https://acg.watch/api/getNextByUrl?url="+options.video.quality[0].url, function(res){
+            $.get("https://acg.watch/api/getNextByUrl?url="+options.video.quality[1].url, function(res){
                 //res = JSON.parse(res);
                 if(page.tran.getLang() == 'zh')
 					dp.notice("正在跳转至下一集", 4000);
@@ -277,15 +277,27 @@ $(function(){
     	var getQuality = function(res){
     		var quality = [
     			{
-    				name: ((page.tran.getLang() == 'zh')?"海外":'USA'),
+    				name: ((page.tran.getLang() == 'zh')?"自动":'Auto'),
+    				url: 'https://api.yimian.xyz/video/?url='+res.url
+    			},
+    			{
+    				name: ((page.tran.getLang() == 'zh')?"直链":'Origin'),
     				url: res.url
+    			},
+    			{
+    				name: ((page.tran.getLang() == 'zh')?"代理":'Proxy'),
+    				url: 'https://proxy.yimian.xyz/get/?url='+btoa(res.url)
     			}
     		];
     		if(res.hasOwnProperty('extra') && res.extra.length > 0){
     			for(var i = 0; i < res.extra.length; i++){
     				quality.push({
-    					name: ((i==0)?(((page.tran.getLang() == 'zh')?"国内":'China ')):(((page.tran.getLang() == 'zh')?"备选"+i:'Backup '+i))),
+    					name: ((page.tran.getLang() == 'zh')?"备选"+i+'_直链':'Backup '+i+'_origin'),
     					url: res.extra[i]
+    				});
+    				quality.push({
+    					name: ((page.tran.getLang() == 'zh')?"备选"+i+'_代理':'Backup '+i+'_proxy'),
+                        url: 'https://proxy.yimian.xyz/get/?url='+btoa(res.extra[i])
     				});
     			}
     		}
